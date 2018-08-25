@@ -1,0 +1,42 @@
+---
+
+dependencies:
+  - name: bedrock.common
+    scm: git
+    src: https://github.com/BedrockSolutions/ansible-role-common.git
+    vars:
+      common:
+        command: dependency
+    version: master
+
+  - name: bedrock.fail2ban
+    scm: git
+    src: https://github.com/BedrockSolutions/ansible-role-fail2ban.git
+    vars:
+      fail2ban:
+        command: dependency
+    version: master
+
+  - name: bedrock.os
+    scm: git
+    src: https://github.com/BedrockSolutions/ansible-role-os.git
+    vars:
+      os:
+        command: dependency
+    version: master
+
+  - name: bedrock.ssh
+    scm: git
+    src: https://github.com/BedrockSolutions/ansible-role-ssh.git
+    vars:
+      ssh:
+        command: dependency
+    version: master
+
+  - name: bedrock.stackdriver
+    scm: git
+    src: https://github.com/BedrockSolutions/ansible-role-stackdriver.git
+    vars:
+      stackdriver:
+        command: dependency
+    version: master

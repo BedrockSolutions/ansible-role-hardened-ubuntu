@@ -1,0 +1,5 @@
+---
+
+- include_tasks: hardened_ubuntu.yml
+  tags: hardened_ubuntu
+  when: hardened_ubuntu_enabled
