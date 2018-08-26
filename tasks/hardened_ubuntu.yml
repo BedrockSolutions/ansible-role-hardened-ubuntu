@@ -43,6 +43,9 @@
         ssh_exclusive_keys_enabled:
           type: boolean
           default: no
+        ssh_sftp_enabled:
+          type: boolean
+          default: yes
         ssh_tun_device_forwarding_enabled:
           type: boolean
           default: no
@@ -52,9 +55,11 @@
       required:
         - os_kernel_ip_forwarding_enabled
         - ssh_allowed_networks
+        - ssh_allowed_users
         - ssh_agent_forwarding_enabled
         - ssh_authorized_keys
         - ssh_exclusive_keys_enabled
+        - ssh_sftp_enabled
         - ssh_tun_device_forwarding_enabled
         - stackdriver_enabled
     instance: "{{ hardened_ubuntu }}"
@@ -102,6 +107,7 @@
     ssh:
       command: harden
       agent_forwarding_enabled: "{{ hardened_ubuntu_v.ssh_agent_forwarding_enabled }}"
+      sftp_enabled: "{{ hardened_ubuntu_v.ssh_sftp_enabled }}"
       tun_device_forwarding_enabled: "{{ hardened_ubuntu_v.tun_device_forwarding_enabled }}"
 
 - name: 'Install UFW'

@@ -133,6 +133,12 @@ variable is set, removes additional keys from the
     * type: boolean
     * default: `false`
 
+* __`ssh_sftp_enabled`:__ Enable SFTP over SSH connections. If
+disabled, use SCP instead
+
+    * type: boolean
+    * default: `true`
+      
 * __`ssh_tun_device_forwarding_enabled`:__ Enable SSH TUN device
 forwarding in the SSH daemon
 
