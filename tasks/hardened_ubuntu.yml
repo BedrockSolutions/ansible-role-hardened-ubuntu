@@ -167,3 +167,9 @@
       command: swap
       device: "{{ hardened_ubuntu_v.os_swap_device }}"
   when: "'os_swap_device' in hardened_ubuntu_v"
+
+- import_role:
+    name: bedrock.os
+  vars:
+    os:
+      command: reboot_if_required
