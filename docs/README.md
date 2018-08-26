@@ -4,37 +4,44 @@ Ansible role that applies multiple layers of system hardening.
 A suitable starting point for a wide variety of applications.
 
 A prettier version of this documentation is located at 
-https://bedrocksolutions.github.io/ansible-role-os
+https://bedrocksolutions.github.io/ansible-role-hardened-ubuntu
 
-* Commands
-  * [harden](#harden)
-  * [install_ufw](#install_ufw)
-  * [install_unattended_upgrades](#install_unattended_upgrades)
-  * [reboot](#reboot)
-  * [reboot_if_required](#reboot_if_required)
-  * [shutdown](#shutdown)
-  * [swap](#swap)
-  * [update_packages](#update_packages)
-  * [upgrade_packages](#upgrade_packages)
+## Features
 
-* Handlers
+### Hardening
 
-  * [os_reboot](#os_reboot)
-  * [os_ufw_rules_changed](#os_ufw_rules_changed)
+The following steps are performed to secure the operating system:
+
+* Hardens the SSH client and server using 
+[dev-sec.ssh-hardening](https://github.com/dev-sec/ansible-ssh-hardening)
+* Hardens the entire operating system using 
+[dev-sec.os-hardening](https://github.com/dev-sec/ansible-os-hardening)
+* Installs Fail2Ban and configures a jail for SSH(tcp:22)
+* Installs Unattended Upgrades to keep security patches up-to-date
+
+### Convenience:
+
+The following convenience features are also included:
+
+* Updates the Apt cache and upgrades all packages
+* Authorize one or more SSH keys (optional)
+* Configure Fail2Ban to send Slack/Discord notifications upon
+IP ban
+* Install the Stackdriver monitoring agents (optional)
+* Configure a device for use as swap space (optional)
 
 ## Installation
 
-To use `bedrock.os` in another role, create the file 
+To use `bedrock.hardened-ubuntu` in another role, create the file 
 `<role_root>/meta/main.yml` with the following structure:
 
 ```yaml
 dependencies:
-  - name: bedrock.os
+  - name: bedrock.hardened-ubuntu
     scm: git
-    src: https://github.com/BedrockSolutions/ansible-role-os.git
+    src: https://github.com/BedrockSolutions/ansible-role-hardened-ubuntu.git
     vars:
-      os:
-        command: dependency
+      hardened_ubuntu_enabled: no
     version: master
 ```
 
@@ -42,256 +49,98 @@ If you just want to use this role in a playbook or task file, then
 add an entry to the `requirements.yml` file:
 
 ```yaml
-- name: bedrock.os
-  scm: git
-  src: https://github.com/BedrockSolutions/ansible-role-os.git
-  version: master
+  - name: bedrock.hardened-ubuntu
+    scm: git
+    src: https://github.com/BedrockSolutions/ansible-role-hardened-ubuntu.git
+    version: master
 ```
 >__Note:__ In both examples, the `version` field can be a branch, tag, or commit hash.
 
-The role can now be imported or included as `bedrock.os`.
+The role can now be imported or included as `bedrock.hardened-ubuntu`.
 
-## Command Invocation
+## Role Variable Scoping
 
-The role is made up of commands that can be invoked using the following 
-syntax:
+All role variables are passed as a single `dict` 
+named `hardened_ubuntu`:
+
+For example:
 
 ```yaml
 - import_role
-    name: bedrock.os
+    name: bedrock.hardened-ubuntu
   vars:
-    os:
-      command: <command_name>
-      ...command_vars
+    hardened_ubuntu: # <-- All vars are scoped under this dict!
+      os_swap_device: /dev/sdb
+      ssh_agent_forwarding_enabled: yes
+      
 ```
 
-or
+## Role Variables
 
-```yaml
-- include_role
-    name: bedrock.os
-  vars:
-    os:
-      command: <command_name>
-      ...command_vars
-```
+* __`fail2ban_ignored_ips`:__ optional list of IP networks that 
+are excluded from fail2ban monitoring. 
 
-## Commands
+    * type: list\<string\>
 
-### __harden__
+> Note: During the setup phase, it can be useful to exclude your 
+own private IP address space.
 
-Hardens the operating system. This command leverages the awesome
-[dev-sec/ansible-os-hardening](https://github.com/dev-sec/ansible-os-hardening)
-role to perform the bulk of the hardening operations.
+* __`fail2ban_slack_webhook_url`:__ optional Slack or Discord
+webhook URL to call when a host is baned.
+    * type: string
+    * format: uri
 
-#### Arguments
+* __`os_kernel_ip_forwarding`:__ should IP forwarding be enabled
+in the kernel. 
 
-* __`kernel_ip_forwarding`:__ should IP forwarding be enabled
-in the kernel
     * type: boolean
     * default: `false`
-  
-* __`ufw_manage_defaults`:__ should the UFW default policy be
-set by this command
+
+> Note: Certain subsystems, such as Docker, require kernel IP
+forwarding to be enabled.
+      
+* __`os_swap_device`:__ optional device to use for swap space
+    * type: string
+
+* __`ssh_agent_forwarding_enabled`:__ Enable SSH Agent forwarding
+in the SSH daemon
+
     * type: boolean
     * default: `false`
-  
-### __install_ufw__
-
-Install UFW
-
-#### Arguments
 
 * __`ssh_allowed_networks`:__ list of IP networks that are allowed
-to connect to the SSH daemon
+to connect to the SSH daemon. At least one entry is required.
     * type: list\<string\>
     * default: `['0.0.0.0/0']`
-      
-#### Example
+    * minLength: 1
 
-Install UFW, restricting SSH access to a specific network:
+* __`ssh_allowed_users`:__ A list of usernames allowed to connect 
+to the SSH daemon
 
-```yaml
-- import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: install_ufw
-      ssh_allowed_networks:
-        - 10.1.0.0/16
-```
+    * type: list\<string\>
+    * default: `['ubuntu']`
+    * minLength: 1
 
-### __install_unattended_upgrades__
+* __`ssh_authorized_keys`:__ An optional list of SSH public keys 
+allowed to connect to the SSH daemon
 
-Install Unattended Upgrades
+    * type: list\<string\>
 
-#### Arguments
+* __`ssh_exclusive_keys_enabled`:__ If the `ssh_authorized_keys`
+variable is set, removes additional keys from the 
+`.ssh/authorized_Keys` file
 
-* __`stackdriver_enabled`:__ If true, configures the
-Stackdriver logging agent to ingest the log in `/var/log`
-    * type: boolean
-    * default: no
-      
-#### Example
-
-Install Unattended Upgrades:
-
-```yaml
-- import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: install_unattended_upgrades
-```
-
-### __reboot__
-
-Reboots the machine. 
-
-* Flushes all handlers beforehand.
-* After the reboot, waits for the machine's ssh connection 
-to return before proceeding.
-
-#### Example
-
-```yaml
-- import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: reboot
-```
-
-### __reboot_if_required__
-
-Reboots the machine if the `reboot` handler had been previously
-called, or if the `/var/run/reboot-required` file exists. 
-
-* Flushes all handlers beforehand.
-* After the reboot, waits for the machine's ssh connection 
-to return before proceeding.
-
-#### Example
-
-Notify the reboot handler:
-
-```yaml
-- some_task:
-  notify: reboot
-```
-
-At a later point in the play where a conditional reboot is desired:
-
-```yaml
-- import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: reboot_if_required
-```
-
-### __shutdown__
-
-Performs an immediate system shutdown.
-
-#### Example
-
-```yaml
-- import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: shutdown
-```
-
-### __swap__
-
-Configures a given device for use as swap space.
-
-#### Arguments
-
-* __`cache_pressure`:__ sets the system `vfs_cache_pressure`
-parameter
-    * type: integer
-    * minimum: 0
-    * maximum: 100
-    * default: 50
-
-* __`device`:__ the device which will be used for swap
-parameter
-    * type: string
-
-* __`swappiness`:__ sets the system `swappiness` parameter
-    * type: integer
-    * minimum: 0
-    * maximum: 100
-    * default: 10
-
-### __update_packages__
-
-Updates the `apt` package cache.
-
-#### Example
-
-```yaml
-- import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: update_packages
-```
-
-### __upgrade_packages__
-
-Upgrades installed packages
-
-#### Arguments
-
-* __`autoclean`:__ cleans the local repository of retrieved 
-package files that can no longer be downloaded
-    * type: boolean
-    * default: `true`
-
-* __`autoremove`:__ remove unused dependency packages
-    * type: boolean
-    * default: `true`
-
-* __`force_apt_get`:__ force usage of apt-get instead of aptitude
-    * type: boolean
-    * default: `true`
-
-* __`type`:__ type of upgrade to perform
-    * type: string
-    * enum: `['full', 'safe']`
-    * default: `'safe'`
-
-* __`update_cache`:__ update the cache before running upgrade
     * type: boolean
     * default: `false`
 
-#### Example
+* __`ssh_tun_device_forwarding_enabled`:__ Enable SSH TUN device
+forwarding in the SSH daemon
 
-Update the package cache and then upgrade packages:
+    * type: boolean
+    * default: `false`
+      
+* __`stackdriver_enabled`:__ installs the Stackdriver agents and
+ingests the following logs: fail2ban, unattended_upgrades 
 
-```yaml
-- import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: upgrade_packages
-      update_cache: yes
-```
-
-## Handlers
-
-### __os_reboot__
-
-Causes the `reboot_if_required` command to initiate a reboot
-when it is called.
-
-#### Example
-
-```yaml
-- some_task:
-  notify: os_reboot
-```
+    * type: boolean
+    * default: `false`

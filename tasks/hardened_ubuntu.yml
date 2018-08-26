@@ -12,7 +12,7 @@
         fail2ban_slack_webhook_url:
           type: string
           format: uri
-        os_kernel_ip_forwarding:
+        os_kernel_ip_forwarding_enabled:
           type: boolean
           default: no
         os_swap_device:
@@ -23,34 +23,39 @@
             type: string
             format: ipv4
           minLength: 1
-        ssh_allow_agent_forwarding:
-          type: boolean
-          default: no
-        ssh_allow_tcp_forwarding:
+          default:
+            - 0.0.0.0/0
+        ssh_allowed_users:
+          type: list
+          items:
+            type: string
+          minLength: 1
+          default:
+            - ubuntu
+        ssh_agent_forwarding_enabled:
           type: boolean
           default: no
         ssh_authorized_keys:
           type: array
           items:
             type: string
-          minLength: 1
-        ssh_exclusive_keys:
+          default: []
+        ssh_exclusive_keys_enabled:
           type: boolean
           default: no
-        ssh_permit_tunnel:
+        ssh_tun_device_forwarding_enabled:
           type: boolean
           default: no
         stackdriver_enabled:
           type: boolean
           default: no
       required:
-        - os_kernel_ip_forwarding
+        - os_kernel_ip_forwarding_enabled
         - ssh_allowed_networks
-        - ssh_allow_agent_forwarding
-        - ssh_allow_tcp_forwarding
+        - ssh_agent_forwarding_enabled
         - ssh_authorized_keys
-        - ssh_exclusive_keys
-        - ssh_permit_tunnel
+        - ssh_exclusive_keys_enabled
+        - ssh_tun_device_forwarding_enabled
         - stackdriver_enabled
     instance: "{{ hardened_ubuntu }}"
   register: hardened_ubuntu_validated
@@ -79,8 +84,8 @@
     ssh:
       command: authorize_keys
       authorized_keys: "{{ hardened_ubuntu_v.ssh_authorized_keys }}"
-      exclusive: "{{ hardened_ubuntu_v.ssh_exclusive_keys }}"
-  when: (hardened_ubuntu_v.ssh_exclusive_keys | length) > 0
+      exclusive: "{{ hardened_ubuntu_v.ssh_exclusive_keys_enabled }}"
+  when: (hardened_ubuntu_v.ssh_authorzied_keys | length) > 0
 
 - name: "Install editors"
   apt:
@@ -96,9 +101,8 @@
   vars:
     ssh:
       command: harden
-      allow_agent_forwarding: "{{ hardened_ubuntu_v.ssh_allow_agent_forwarding }}"
-      allow_tcp_forwarding: "{{ hardened_ubuntu_v.ssh_allow_tcp_forwarding }}"
-      permit_tunnel: "{{ hardened_ubuntu_v.ssh_permit_tunnel }}"
+      agent_forwarding_enabled: "{{ hardened_ubuntu_v.ssh_agent_forwarding_enabled }}"
+      tun_device_forwarding_enabled: "{{ hardened_ubuntu_v.tun_device_forwarding_enabled }}"
 
 - name: 'Install UFW'
   import_role:
