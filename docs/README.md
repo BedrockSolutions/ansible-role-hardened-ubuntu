@@ -90,7 +90,7 @@ webhook URL to call when a host is baned.
     * type: string
     * format: uri
 
-* __`os_kernel_ip_forwarding`:__ should IP forwarding be enabled
+* __`os_kernel_ip_forwarding_enabled`:__ should IP forwarding be enabled
 in the kernel. 
 
     * type: boolean
