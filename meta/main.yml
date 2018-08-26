@@ -1,5 +1,18 @@
 ---
 
+galaxy_info:
+  author: Jay Cheroske
+  description: >
+    Ansible role that applies multiple layers of system hardening.
+    A suitable starting point for a wide variety of applications.
+  company: Bedrock Solutions
+  license: GNU 3.0
+  min_ansible_version: '2.5'
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
 dependencies:
   - name: bedrock.common
     scm: git
