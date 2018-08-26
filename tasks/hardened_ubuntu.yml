@@ -109,7 +109,7 @@
       agent_forwarding_enabled: "{{ hardened_ubuntu_v.ssh_agent_forwarding_enabled }}"
       allowed_users: "{{ hardened_ubuntu_v.ssh_allowed_users }}"
       sftp_enabled: "{{ hardened_ubuntu_v.ssh_sftp_enabled }}"
-      tun_device_forwarding_enabled: "{{ hardened_ubuntu_v.tun_device_forwarding_enabled }}"
+      tun_device_forwarding_enabled: "{{ hardened_ubuntu_v.ssh_tun_device_forwarding_enabled }}"
 
 - name: 'Install UFW'
   import_role:
