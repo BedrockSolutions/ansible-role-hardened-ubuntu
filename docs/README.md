@@ -26,7 +26,7 @@ The following convenience features are also included:
 * Updates the Apt cache and upgrades all packages
 * Authorize one or more SSH keys (optional)
 * Configure Fail2Ban to send Slack/Discord notifications upon
-IP ban
+IP ban (optional)
 * Install the Stackdriver monitoring agents (optional)
 * Configure a device for use as swap space (optional)
 
