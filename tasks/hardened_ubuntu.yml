@@ -26,7 +26,7 @@
           default:
             - 0.0.0.0/0
         ssh_allowed_users:
-          type: list
+          type: array
           items:
             type: string
           minLength: 1
