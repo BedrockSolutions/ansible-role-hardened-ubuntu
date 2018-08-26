@@ -160,7 +160,8 @@
       command: install_unattended_upgrades
       stackdriver_enabled: "{{ hardened_ubuntu_v.stackdriver_enabled }}"
 
-- import_role:
+- name: "Configure swap space"
+  import_role:
     name: bedrock.os
   vars:
     os:
@@ -168,7 +169,8 @@
       device: "{{ hardened_ubuntu_v.os_swap_device }}"
   when: "'os_swap_device' in hardened_ubuntu_v"
 
-- import_role:
+- name: "Reboot the machine if necessary"
+  import_role:
     name: bedrock.os
   vars:
     os:
