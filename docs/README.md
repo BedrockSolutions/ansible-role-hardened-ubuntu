@@ -41,7 +41,7 @@ dependencies:
     scm: git
     src: https://github.com/BedrockSolutions/ansible-role-hardened-ubuntu.git
     vars:
-      hardened_ubuntu_enabled: no
+      hardened_ubuntu_enabled: no # <-- fixes Ansible dependency bug!
     version: master
 ```
 
