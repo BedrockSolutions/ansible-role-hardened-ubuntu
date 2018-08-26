@@ -16,7 +16,7 @@ The following steps are performed to secure the operating system:
 [dev-sec.ssh-hardening](https://github.com/dev-sec/ansible-ssh-hardening)
 * Hardens the entire operating system using 
 [dev-sec.os-hardening](https://github.com/dev-sec/ansible-os-hardening)
-* Installs Fail2Ban and configures a jail for SSH(tcp:22)
+* Installs Fail2Ban and configures a jail for SSH
 * Installs Unattended Upgrades to keep security patches up-to-date
 
 ### Convenience:
