@@ -90,7 +90,7 @@
       command: authorize_keys
       authorized_keys: "{{ hardened_ubuntu_v.ssh_authorized_keys }}"
       exclusive: "{{ hardened_ubuntu_v.ssh_exclusive_keys_enabled }}"
-  when: (hardened_ubuntu_v.ssh_authorzied_keys | length) > 0
+  when: (hardened_ubuntu_v.ssh_authorized_keys | length) > 0
 
 - name: "Install editors"
   apt:
