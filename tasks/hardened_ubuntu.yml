@@ -36,10 +36,13 @@
           type: boolean
           default: no
         ssh_authorized_keys:
-          type: array
-          items:
-            type: string
-          default: []
+          type: object
+          patternProperties:
+            "^[\w]+$":
+              type: array
+              items:
+                type: string
+              minLength: 1
         ssh_exclusive_keys_enabled:
           type: boolean
           default: no
@@ -57,7 +60,6 @@
         - ssh_allowed_networks
         - ssh_allowed_users
         - ssh_agent_forwarding_enabled
-        - ssh_authorized_keys
         - ssh_exclusive_keys_enabled
         - ssh_sftp_enabled
         - ssh_tun_device_forwarding_enabled
@@ -90,7 +92,7 @@
       command: authorize_keys
       authorized_keys: "{{ hardened_ubuntu_v.ssh_authorized_keys }}"
       exclusive: "{{ hardened_ubuntu_v.ssh_exclusive_keys_enabled }}"
-  when: (hardened_ubuntu_v.ssh_authorized_keys | length) > 0
+  when: "'ssh_authorized_keys' in hardened_ubuntu_v"
 
 - name: "Install editors"
   apt:
