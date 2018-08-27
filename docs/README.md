@@ -121,10 +121,13 @@ to the SSH daemon
     * default: `['ubuntu']`
     * minLength: 1
 
-* __`ssh_authorized_keys`:__ An optional list of SSH public keys 
-allowed to connect to the SSH daemon
+* __`ssh_authorized_keys`:__ A optional dict containing public 
+keys to authorize. The data structure is a mapping from a username
+to an array of keys.
 
-    * type: list\<string\>
+    * type: object
+    * key: username
+    * value: array of public keys
 
 * __`ssh_exclusive_keys_enabled`:__ If the `ssh_authorized_keys`
 variable is set, removes additional keys from the 
@@ -150,3 +153,18 @@ ingests the following logs: fail2ban, unattended_upgrades
 
     * type: boolean
     * default: `false`
+
+## Example
+
+```yaml
+- import_task:
+    name: bedrock.hardened-ubuntu
+  vars:
+    hardened_ubuntu:
+      fail2ban_slack_webhook_url: http://a.slack.web/hook/url
+      os_swap_device: /dev/sdc
+      ssh_authorized_keys:
+        ubuntu:
+          - ssh-ed25519 ************************ foo@bar.com
+      ssh_exclusive_keys_enabled: true
+```
