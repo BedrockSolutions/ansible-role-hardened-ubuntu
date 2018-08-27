@@ -64,7 +64,7 @@
         - ssh_sftp_enabled
         - ssh_tun_device_forwarding_enabled
         - stackdriver_enabled
-    instance: "{{ hardened_ubuntu }}"
+    instance: "{{ hardened_ubuntu | default({}) }}"
   register: hardened_ubuntu_validated
 
 - set_fact:
