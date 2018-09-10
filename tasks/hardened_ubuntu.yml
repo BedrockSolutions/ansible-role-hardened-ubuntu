@@ -9,6 +9,7 @@
           items:
             type: string
             format: ipv4
+          default: []
         fail2ban_slack_webhook_url:
           type: string
           format: uri
@@ -56,6 +57,7 @@
           type: boolean
           default: no
       required:
+        - fail2ban_ignored_ips
         - os_kernel_ip_forwarding_enabled
         - ssh_allowed_networks
         - ssh_allowed_users
@@ -143,7 +145,7 @@
   vars:
     fail2ban:
       command: create_sshd_jail
-      ignored_ips: "{{ hardened_ubuntu_v.fail2ban_ignored_ips | default(None) }}"
+      ignored_ips: "{{ hardened_ubuntu_v.fail2ban_ignored_ips }}"
       slack_webhook_url: "{{ hardened_ubuntu_v.fail2ban_slack_webhook_url | default(None) }}"
 
 - name: 'Harden operating system'
