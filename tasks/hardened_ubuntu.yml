@@ -171,7 +171,7 @@
     os:
       command: swap
       device: "{{ hardened_ubuntu_v.os_swap_device }}"
-  when: "'os_swap_device' in hardened_ubuntu_v"
+  when: "('os_swap_device' in hardened_ubuntu_v) and ((hardened_ubuntu_v.os_swap_device | length) > 0)"
 
 - name: "Reboot the machine if necessary"
   import_role:
