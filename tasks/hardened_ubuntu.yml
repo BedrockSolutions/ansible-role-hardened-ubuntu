@@ -96,9 +96,10 @@
       exclusive: "{{ hardened_ubuntu_v.ssh_exclusive_keys_enabled }}"
   when: "'ssh_authorized_keys' in hardened_ubuntu_v"
 
-- name: "Install editors"
+- name: "Install various packages"
   apt:
     name:
+      - logrotate
       - nano
       - vim
     state: present
