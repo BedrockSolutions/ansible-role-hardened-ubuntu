@@ -101,7 +101,7 @@
       command: create_sshd_jail
       ignored_ips: "{{ hardened_ubuntu_v.fail2ban_ignored_ips }}"
       slack_webhook_url: "{{ hardened_ubuntu_v.fail2ban_slack_webhook_url | default(None) }}"
-x
+
 - name: "Configure swap space"
   import_role:
     name: bedrock.os
