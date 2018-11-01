@@ -1,5 +1,4 @@
 ---
 
 - include_tasks: hardened_ubuntu.yml
-  tags: hardened_ubuntu
-  when: hardened_ubuntu_enabled
+  when: (hardened_ubuntu is not defined) or ('command' not in hardened_ubuntu) or (hardened_ubuntu.command != 'dependency')
