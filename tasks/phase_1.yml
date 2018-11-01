@@ -42,6 +42,12 @@
     state: present
   become: yes
 
+- name: "Install pip3"
+  shell: curl -sS https://bootstrap.pypa.io/get-pip.py | sudo python3
+  args:
+    creates: /usr/local/bin/pip3
+    warn: no
+
 - name: "Install Stackdriver agents"
   import_role:
     name: bedrock.stackdriver
