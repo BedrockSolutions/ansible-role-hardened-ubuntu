@@ -38,6 +38,14 @@ dependencies:
         command: dependency
     version: master
 
+  - name: bedrock.python
+    scm: git
+    src: https://github.com/BedrockSolutions/ansible-role-python.git
+    vars:
+      python:
+        command: dependency
+    version: master
+
   - name: bedrock.ssh
     scm: git
     src: https://github.com/BedrockSolutions/ansible-role-ssh.git
