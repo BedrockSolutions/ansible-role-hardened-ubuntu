@@ -46,8 +46,8 @@
   import_role:
     name: bedrock.python
   vars:
-    os:
-      command: install_pip3
+    python:
+      command: pip3
 
 - name: "Install Stackdriver agents"
   import_role:
