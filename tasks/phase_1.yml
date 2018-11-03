@@ -80,6 +80,7 @@
     os:
       command: install_unattended_upgrades
       stackdriver_enabled: "{{ hardened_ubuntu_v.stackdriver_enabled }}"
+      unattended_enabled: yes
 
 - name: "Reboot the machine if necessary"
   import_role:
