@@ -42,13 +42,6 @@
     state: present
   become: yes
 
-- name: 'Install pip3'
-  import_role:
-    name: bedrock.python
-  vars:
-    python:
-      command: pip3
-
 - name: "Install Stackdriver agents"
   import_role:
     name: bedrock.stackdriver
