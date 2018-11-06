@@ -1,88 +1,91 @@
 ---
 
-- validate:
-    schema:
-      type: object
-      properties:
-        os_kernel_ip_forwarding_enabled:
-          type: boolean
-          default: no
-        stackdriver_enabled:
-          type: boolean
-          default: no
-        unattended_upgrades_enabled:
-          type: boolean
-          default: no
-      required:
-        - os_kernel_ip_forwarding_enabled
-        - stackdriver_enabled
-        - unattended_upgrades_enabled
-    instance: "{{ hardened_ubuntu | default({}) }}"
-  register: hardened_ubuntu_validated
+- block:
+  - validate:
+      schema:
+        type: object
+        properties:
+          os_kernel_ip_forwarding_enabled:
+            type: boolean
+            default: no
+          stackdriver_enabled:
+            type: boolean
+            default: no
+          unattended_upgrades_enabled:
+            type: boolean
+            default: no
+        required:
+          - os_kernel_ip_forwarding_enabled
+          - stackdriver_enabled
+          - unattended_upgrades_enabled
+      instance: "{{ hardened_ubuntu | default({}) }}"
+    register: hardened_ubuntu_validated
 
-- set_fact:
-    hardened_ubuntu_v: "{{ hardened_ubuntu_validated.result }}"
+  - set_fact:
+      hardened_ubuntu_v: "{{ hardened_ubuntu_validated.result }}"
 
-- name: "Uninstall sshguard"
-  apt:
-    name: sshguard
-    state: absent
-  become: yes
+  - name: "Uninstall sshguard"
+    apt:
+      name: sshguard
+      state: absent
+    become: yes
 
-- name: "Upgrade packages"
-  import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: upgrade_packages
-      update_cache: yes
+  - name: "Upgrade packages"
+    import_role:
+      name: bedrock.os
+    vars:
+      os:
+        command: upgrade_packages
+        update_cache: yes
 
-- name: "Install various packages"
-  apt:
-    name:
-      - logrotate
-      - nano
-      - vim
-    state: present
-  become: yes
+  - name: "Install various packages"
+    apt:
+      name:
+        - logrotate
+        - nano
+        - vim
+      state: present
+    become: yes
 
-- name: "Install Stackdriver agents"
-  import_role:
-    name: bedrock.stackdriver
-  vars:
-    stackdriver:
-      command: install
-  when: hardened_ubuntu_v.stackdriver_enabled
+  - name: "Install Stackdriver agents"
+    import_role:
+      name: bedrock.stackdriver
+    vars:
+      stackdriver:
+        command: install
+    when: hardened_ubuntu_v.stackdriver_enabled
 
-- name: 'Install fail2ban'
-  import_role:
-    name: bedrock.fail2ban
-  vars:
-    fail2ban:
-      command: install
-      stackdriver_enabled: "{{ hardened_ubuntu_v.stackdriver_enabled }}"
+  - name: 'Install fail2ban'
+    import_role:
+      name: bedrock.fail2ban
+    vars:
+      fail2ban:
+        command: install
+        stackdriver_enabled: "{{ hardened_ubuntu_v.stackdriver_enabled }}"
 
-- name: 'Harden operating system'
-  import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: harden
-      kernel_ip_forwarding: "{{ hardened_ubuntu_v.os_kernel_ip_forwarding_enabled }}"
+  - name: 'Harden operating system'
+    import_role:
+      name: bedrock.os
+    vars:
+      os:
+        command: harden
+        kernel_ip_forwarding: "{{ hardened_ubuntu_v.os_kernel_ip_forwarding_enabled }}"
 
-- name: "Install unattended-upgrades"
-  import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: install_unattended_upgrades
-      stackdriver_enabled: "{{ hardened_ubuntu_v.stackdriver_enabled }}"
-      unattended_enabled: yes
-  when: hardened_ubuntu_v.unattended_upgrades_enabled
+  - name: "Install unattended-upgrades"
+    import_role:
+      name: bedrock.os
+    vars:
+      os:
+        command: install_unattended_upgrades
+        stackdriver_enabled: "{{ hardened_ubuntu_v.stackdriver_enabled }}"
+        unattended_enabled: yes
+    when: hardened_ubuntu_v.unattended_upgrades_enabled
 
-- name: "Reboot the machine if necessary"
-  import_role:
-    name: bedrock.os
-  vars:
-    os:
-      command: reboot_if_required
+  - name: "Reboot the machine if necessary"
+    import_role:
+      name: bedrock.os
+    vars:
+      os:
+        command: reboot_if_required
+  tags:
+    - hardened_ubuntu_phase_1
