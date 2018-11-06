@@ -10,9 +10,13 @@
         stackdriver_enabled:
           type: boolean
           default: no
+        unattended_upgrades_enabled:
+          type: boolean
+          default: no
       required:
         - os_kernel_ip_forwarding_enabled
         - stackdriver_enabled
+        - unattended_upgrades_enabled
     instance: "{{ hardened_ubuntu | default({}) }}"
   register: hardened_ubuntu_validated
 
@@ -74,6 +78,7 @@
       command: install_unattended_upgrades
       stackdriver_enabled: "{{ hardened_ubuntu_v.stackdriver_enabled }}"
       unattended_enabled: yes
+  when: hardened_ubuntu_v.unattended_upgrades_enabled
 
 - name: "Reboot the machine if necessary"
   import_role:
