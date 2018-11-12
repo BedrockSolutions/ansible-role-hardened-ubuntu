@@ -96,5 +96,6 @@
         command: delete_remote_files
         directory: /var/lib/dpkg
         pattern: lock*
+    become: yes
   tags:
     - hardened_ubuntu_phase_1
