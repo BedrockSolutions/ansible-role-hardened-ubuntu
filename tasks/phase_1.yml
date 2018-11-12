@@ -87,5 +87,14 @@
     vars:
       os:
         command: reboot_if_required
+
+  - name: "Delete APT lockfiles"
+    import_role:
+      name: bedrock.ansible
+    vars:
+      ansible:
+        command: delete_remote_files
+        directory: /var/lib/dpkg
+        pattern: lock*
   tags:
     - hardened_ubuntu_phase_1
