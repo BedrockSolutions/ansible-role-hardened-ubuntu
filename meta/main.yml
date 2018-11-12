@@ -18,7 +18,7 @@ dependencies:
     scm: git
     src: https://github.com/BedrockSolutions/ansible-role-ansible.git
     vars:
-      common:
+      ansible:
         command: dependency
     version: master
 
