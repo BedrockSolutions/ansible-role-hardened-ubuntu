@@ -14,6 +14,14 @@ galaxy_info:
         - xenial
         - bionic
 dependencies:
+  - name: bedrock.ansible
+    scm: git
+    src: https://github.com/BedrockSolutions/ansible-role-ansible.git
+    vars:
+      common:
+        command: dependency
+    version: master
+
   - name: bedrock.common
     scm: git
     src: https://github.com/BedrockSolutions/ansible-role-common.git
