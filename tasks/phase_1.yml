@@ -90,12 +90,9 @@
 
   - name: "Delete APT lockfiles"
     import_role:
-      name: bedrock.ansible
+      name: bedrock.os
     vars:
-      ansible:
-        command: delete_remote_files
-        directory: /var/lib/dpkg
-        pattern: lock*
-    become: yes
+      os:
+        command: delete_apt_lockfiles
   tags:
     - hardened_ubuntu_phase_1
