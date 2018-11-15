@@ -88,11 +88,11 @@
       os:
         command: reboot_if_required
 
-  - name: "Delete APT lockfiles"
-    import_role:
-      name: bedrock.os
-    vars:
-      os:
-        command: delete_apt_lockfiles
+#  - name: "Delete APT lockfiles"
+#    import_role:
+#      name: bedrock.os
+#    vars:
+#      os:
+#        command: delete_apt_lockfiles
   tags:
     - hardened_ubuntu_phase_1
