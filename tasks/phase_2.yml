@@ -65,6 +65,14 @@
   - set_fact:
       hardened_ubuntu_v: "{{ hardened_ubuntu_validated.result }}"
 
+  - name: "Upgrade packages"
+    import_role:
+      name: bedrock.os
+    vars:
+      os:
+        command: upgrade_packages
+        update_cache: yes
+
   - name: "Authorize SSH keys"
     import_role:
       name: bedrock.ssh
