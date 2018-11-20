@@ -30,6 +30,13 @@
       state: absent
     become: yes
 
+  - name: "Create temp directories"
+    import_role:
+      name: bedrock.ansible
+    vars:
+      ansible:
+        command: create_temp_directories
+
   - name: "Upgrade packages"
     import_role:
       name: bedrock.os
