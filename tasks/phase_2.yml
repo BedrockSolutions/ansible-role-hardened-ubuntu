@@ -4,7 +4,8 @@
   - validate:
       schema:
         type: object
-        additionalProperties: no
+        additionalProperties:
+          - command
         properties:
           fail2ban_ban_time:
             type: string
