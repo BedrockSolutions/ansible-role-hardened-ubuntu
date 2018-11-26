@@ -123,7 +123,9 @@
       fail2ban:
         command: create_sshd_jail
         ban_time: "{{ hardened_ubuntu_v.fail2ban_ban_time }}"
+        find_time: "{{ hardened_ubuntu_v.fail2ban_find_time }}"
         ignored_ips: "{{ hardened_ubuntu_v.fail2ban_ignored_ips }}"
+        max_retries: "{{ hardened_ubuntu_v.fail2ban_max_retries }}"
         slack_webhook_url: "{{ hardened_ubuntu_v.fail2ban_slack_webhook_url | default(None) }}"
 
   - name: "Configure swap space"
